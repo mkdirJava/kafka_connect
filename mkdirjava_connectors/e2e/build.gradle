@@ -1,0 +1,25 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform('com.google.cloud:libraries-bom:26.45.0')
+    implementation 'com.google.cloud:google-cloud-bigquery'
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation libs.junit.jupiter
+    implementation 'org.apache.kafka:connect-api:2.8.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

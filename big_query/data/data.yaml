@@ -1,0 +1,28 @@
+projects:
+- id: test
+  datasets:
+    - id: dataset1
+      tables:
+        - id: table_a
+          columns:
+            - name: id
+              type: INTEGER
+              mode: REQUIRED
+            - name: name
+              type: STRING
+              mode: required # lower case
+            - name: createdTimeStamp
+              type: TIMESTAMP
+              mode: required
+
+        - id: table_b
+          columns:
+            - name: id
+              type: INTEGER
+              mode: REQUIRED
+            - name: name
+              type: STRING
+              mode: required # lower case
+            - name: consumed
+              type: BOOLEAN
+              mode: required

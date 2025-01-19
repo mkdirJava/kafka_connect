@@ -1,0 +1,17 @@
+dependencies {
+    implementation project (':source-topic-value-def')
+    implementation project (':big-query-wrapper')
+    implementation platform('com.google.cloud:libraries-bom:26.45.0')
+    implementation 'com.google.cloud:google-cloud-bigquery'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.mkdirjava.CustomSinkConnector'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude 'META-INF/**'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

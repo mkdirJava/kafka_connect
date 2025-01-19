@@ -1,0 +1,57 @@
+services:
+  bigquery:
+    image: ghcr.io/goccy/bigquery-emulator:latest
+    volumes:
+      - ./big_query/data:/import
+    ports:
+      - '9050:9050'
+      - '9060:9060'
+      # Comment in if you want persistant file
+    # command: ["--project=test", "--data-from-yaml=/import/data.yaml","--database=/import/database.sqlite"]
+    command: ["--project=test", "--data-from-yaml=/import/data.yaml"]
+
+  broker:
+    image: 'apache/kafka:3.9.0' 
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://broker:9092
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:9093
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - KAFKA_NUM_PARTITIONS=3 
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+    ports:
+      - '9092:9092'
+
+  kafka-connect:
+    image: 'apache/kafka:3.9.0'
+    ports:
+      - '8083:8083'
+    entrypoint: /opt/kafka/bin/connect-standalone.sh
+    command: [ "/import/config/connect-standalone.properties","/import/config/connect-source.properties","/import/config/connect-sink.properties" ]
+    depends_on:
+      - broker
+    volumes:
+      - ./kafka-connect-config:/import/config
+      - ./mkdirjava_connectors/sink/build/libs:/opt/import/kafka-connect/plugins/sink
+      - ./mkdirjava_connectors/source/build/libs:/opt/import/kafka-connect/plugins/source
+      - ./mkdirjava_connectors/single_message_transform/build/libs:/opt/import/kafka-connect/plugins/smt
+
+  test:
+    image: gradle:8.12.0-jdk21
+    entrypoint: "gradle"
+    environment:
+      - BIG_QUERY_PROTOCOL_AND_HOST=http://bigquery:9050
+    command: ["-p","/import","test","-i"]
+    volumes:
+      - ./mkdirjava_connectors/e2e:/import
+    depends_on:
+      - bigquery
+      - kafka-connect

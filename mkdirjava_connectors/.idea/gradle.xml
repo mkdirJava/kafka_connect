@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="C:/thirdParty/gradle/gradle-8.10" />
+        <option name="gradleJvm" value="21 (WSL) (3)" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/single_message_transform" />
+            <option value="$PROJECT_DIR$/sink" />
+            <option value="$PROJECT_DIR$/source" />
+            <option value="$PROJECT_DIR$/source-topic-value-def" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
