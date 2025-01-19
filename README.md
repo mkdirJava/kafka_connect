@@ -37,3 +37,17 @@ Steps:
         docker compose up --exit-code-from test
 
     Take a look at docker-compose. This runs up the dependant services and then runs the "test" container. This test container has the source code mounted to it and then runs the e2e tests against the local docker compose instance
+
+## The Gist
+
+There is Big Query emulator, 
+In the Big Query emulator there are two tables
+
+    table_a <- Source
+
+    table_b <- Sink
+
+So the source connector will pull from table_a
+and have its kafka predicates and simple message transformations based upon a predicate done. It will then push it to a topic
+
+The Sink is listening to this topic and will take the data payload and do its own set of Simple Message transformation also based upon its own predicate. Then it will save it doesn to table_b
